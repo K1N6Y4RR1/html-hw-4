@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Epistory </title>
+    <title> Type Racer </title>
 </head>
 <body>
     <style>
@@ -82,25 +82,31 @@
             text-align: center;
         }
     </style>
-        <div class="flexbox">
-            <div class="box" id="box1" style="left:400px">
-                <div class="inside" id="inside1"> </div>
-            </div>
-            <div class="box" id="box2" style="left:800px">
-                <div class="inside" id="inside2"> </div>
-            </div>
-            <div class="box" id="box3" style="left:1200px">
-                <div class="inside" id="inside3"> </div>
-            </div>
+    <audio src="yayying.mp3" id="win"></audio>
+    <audio src="lose.mp3" id="lose"></audio>
+    <audio src="surprise.mp3" id="surprise"></audio>
+    <div class="flexbox">
+        <div class="box" id="box1" style="left:400px">
+            <div class="inside" id="inside1"> </div>
         </div>
+        <div class="box" id="box2" style="left:800px">
+            <div class="inside" id="inside2"> </div>
+        </div>
+        <div class="box" id="box3" style="left:1200px">
+            <div class="inside" id="inside3"> </div>
+        </div>
+    </div>
     <div style="margin:auto; margin-top:15vh;">
-        <a id="retry" href="main.html"> Try again? </a>
+        <a id="retry" href="main.html"> You lost! Try again? </a>
     </div>
     <input type="text" id="reponse" placeholder="Write the word and click Enter"></input>
     <div id="score" class="text" style="position:absolute; bottom:50px; left: 25px; font-size:60px"> Score : 0 </div>
     <div id="vie"> </div>
     
     <script>
+        var win = document.getElementById("win")
+        var lose = document.getElementById("lose")
+        var surprise = document.getElementById("surprise")
         var box1 = document.getElementById('box1')
         var box2 = document.getElementById('box2')
         var box3 = document.getElementById('box3')
@@ -155,11 +161,15 @@
             console.log(life)
             if (life) {
                 box1.style.boxShadow = "0 0 40px 10px rgba(230, 79, 24, 0.7)";
+                surprise.load();
+                surprise.play();
             }
             else {
                 slow = Math.random() > 0.99;
                 if (slow) {
                     box1.style.boxShadow = '0 0 40px 10px rgba(75, 0, 192, 0.7)';
+                    surprise.load();
+                    surprise.play();
                 } else {
                     box1.style.boxShadow = ""
                 }
@@ -203,6 +213,8 @@
                 lives -= 180;
                 vie.style.left = "calc(80% - " + (lives / 2) + "px)";
                 vie.style.width = lives + "px";
+                lose.load();
+                lose.play();
                 specialBox()
             }
 
@@ -212,6 +224,8 @@
                 lives -= 180;
                 vie.style.left = "calc(80% - " + (lives / 2) + "px)";
                 vie.style.width = lives + "px";
+                lose.load();
+                lose.play();
                 specialBox()
             }
 
@@ -221,6 +235,8 @@
                 lives -= 180;
                 vie.style.left = "calc(80% - " + (lives / 2) + "px)";
                 vie.style.width = lives + "px";
+                lose.load();
+                lose.play();
                 specialBox()
             }
 
@@ -230,6 +246,8 @@
                 box1.style.opacity = 0;
                 box2.style.opacity = 0;
                 box3.style.opacity = 0;
+                lose.load();
+                lose.play();
             }
             updateBox()
         }
@@ -251,6 +269,8 @@
                 box1Top = 0
                 specialBox()
                 speed += 0.1
+                win.load();
+                win.play();
                 if (life) {
                     lives += 180
                     vie.style.left = "calc(80% - " + (lives / 2) + "px)";
@@ -271,6 +291,8 @@
                 box2Top = 0
                 specialBox()
                 speed += 0.1
+                win.load();
+                win.play();
                 if (life) {
                     lives += 180
                     vie.style.left = "calc(80% - " + (lives / 2) + "px)";
@@ -291,6 +313,8 @@
                 box3Top = 0
                 specialBox()
                 speed += 0.1
+                win.load();
+                win.play();
                 if (life) {
                     lives += 180
                     vie.style.left = "calc(80% - " + (lives / 2) + "px)";
