@@ -22,10 +22,11 @@
             position: absolute;
             background-image:url(leaf.png);
             background-size:300px, 160px;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+            word-break: break-all;
             opacity:1;
         }
+        /* Les boîtes/feuilles qui sont utilisés pour contenir les mots. Word-wrap et overflow-wrap assure que les mots de dépassent pas la feuille et vont plutôt passer à la prochaine ligne.
+        Aide de : https://www.w3schools.com/cssref/tryit.php?filename=trycss3_word-break */
         #retry {
             opacity:0;
             pointer-events: none;
@@ -41,6 +42,7 @@
             transition-duration: 0.4s;
             text-decoration:none;
         }
+        /* Le bouton pour réessayer le jeu. Il n'est pas accessible sauf si on perd tous nos vies (5 vies). */
         #vie {
             margin:auto;
             position:fixed;
@@ -51,6 +53,7 @@
             background-image:url(lives.png);
             background-size : 180px 180px;
         }
+        /* Les vies du joueurs. Ils sont en bas à droite et sont représentés par des mini feuilles. */
         .flexbox {
             display:flex;
             width:550px;
@@ -58,6 +61,7 @@
             margin:auto;
             align-items:center;
         }
+        /* Flexbox pour contenir toutes les feuilles dans une seule div. */
         .inside {
             text-align: center;
             color: azure;
@@ -68,6 +72,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
+        /* À l'intérieur des feuilles, il y a une autre div qui aide à centrer le mot et à garder celui-ci dans la feuille.*/
         #reponse {
             color:rgb(44, 29, 19);
             font-family: 'comic sans ms';
@@ -81,10 +86,12 @@
             border-radius: 5px;
             text-align: center;
         }
+        /* L'input du joueur. Il se situe en bas au centre.*/
     </style>
     <audio src="yayying.mp3" id="win"></audio>
     <audio src="lose.mp3" id="lose"></audio>
     <audio src="surprise.mp3" id="surprise"></audio>
+    <!-- Audios utilisés dans le jeu. -->
     <div class="flexbox">
         <div class="box" id="box1" style="left:400px">
             <div class="inside" id="inside1"> </div>
@@ -96,44 +103,56 @@
             <div class="inside" id="inside3"> </div>
         </div>
     </div>
-    <div style="margin:auto; margin-top:15vh;">
+    <!-- Les feuilles -->
+    <div style="margin:auto; margin-top:20vh;">
         <a id="retry" href="main.html"> You lost! Try again? </a>
     </div>
+    <!-- Bouton réessayer. -->
     <input type="text" id="reponse" placeholder="Write the word and click Enter"></input>
+    <!--Input du joueur-->
     <div id="score" class="text" style="position:absolute; bottom:50px; left: 25px; font-size:60px"> Score : 0 </div>
+    <!-- Score -->
     <div id="vie"> </div>
-    
+    <!-- Les vies / les mini feuilles. -->
     <script>
         var win = document.getElementById("win")
         var lose = document.getElementById("lose")
         var surprise = document.getElementById("surprise")
+        var vie = document.getElementById("vie")
+        var retry = document.getElementById("retry")
+        var reponse = document.getElementById('reponse')
+        var score = document.getElementById("score");
+        
+        // Variables utilisés pour chacun des feuilles. Certains sont personalisés et aléatoires (boxLeft et boxStats)
         var box1 = document.getElementById('box1')
         var box2 = document.getElementById('box2')
         var box3 = document.getElementById('box3')
         var inside1 = document.getElementById("inside1")
         var inside2 = document.getElementById("inside2")
         var inside3 = document.getElementById("inside3")
-        var vie = document.getElementById("vie")
-        var retry = document.getElementById("retry")
         var box1Top = 0
         var box2Top = 0
         var box3Top = 0
-        var essaiUser = 0
-        var deplacement = 2
-        var score = document.getElementById("score");
-        var points = 0
         var box1Left = 400
         var box2Left = 800
         var box3Left = 1200
-        var speed = 1
-        var reponse = document.getElementById('reponse')
-        var lives = 900
         var box1Stats = 0.8 + Math.random() * 0.3; 
         var box2Stats = 0.5 + Math.random() * 0.3;
         var box3Stats = 0.3 + Math.random() * 0.3;  
-
-
+        var boxCounter1 = Math.floor(Math.random() * array.length);
+        var boxCounter2 = Math.floor(Math.random() * array.length);
+        var boxCounter3 = Math.floor(Math.random() * array.length);
+        
+        // variables utilisés pour le fonctionnement du jeu, pointage et des vies.
+        var essaiUser = 0
+        var deplacement = 2
+        var points = 0
+        var speed = 1
+        var lives = 900
         var slow = null
+        var life = null
+
+        // Les mots choisits. J'ai demandé pour l'IA pour me faire une liste de mots, de facile à extrêmement difficile. Les mots changent dépendamment du nombre de points obtenus par le joueur.
         if (points < 100) {
             array = ['your', 'you', 'year', 'would','work','with','will','who','which','when','well','we','way','want','use','us','two','to','time','this','think','they','these','there','then','them','their','the','that','than','take','some','so','she','see','say','people','over','out','our','other','or','only','one','on','now','not','no','new','my','most','me','make','look','like','know','just','its','it','into','in','if','I','how','him','her','he','have','good','go','give','get','from','for','first','even']
         } else if (points < 300) {
@@ -144,15 +163,12 @@
             array = ['pneumonoultramicroscopicsilicovolcanoconiosis', 'antidisestablishmentarianism', 'supercalifragilisticexpialidocious', 'pseudopseudohypoparathyroidism', 'floccinaucinihilipilification', 'uncharacteristically', 'electroencephalograph',  'photographically', 'straightforwardly', 'uncompromisingly', 'incomprehensibility', 'honorificabilitudinitatibus', 'lymphangioleiomyomatosis', 'sesquipedalianism', 'counterproductiveness']
         }
 
-        var boxCounter1 = Math.floor(Math.random() * array.length);
-        var boxCounter2 = Math.floor(Math.random() * array.length);
-        var boxCounter3 = Math.floor(Math.random() * array.length);
-
-
+        // tous les mots qui seront utilisés sont écrits dans le console.
         for(i=0; i<array.length;i++) {
             console.log(array[i])
         }
-        
+        // fonction pour déterminer si un mot est "special", donc s'il peut regagner une vie ou retourner la vitesse à celle originale. Les mots speciales ont un petit effet "shadow" pour le dire visuellement. Malheureusement, puisque l'image de la feuille est un rectangle, le shadow n'a pas l'air trop exacte au périmètre de la feuille. Un SFX joue lorsque tu as un mot spécial.
+        // Aide par : https://stackoverflow.com/questions/6422790/how-to-create-a-white-glow-border-around-an-image
         function specialBox() {
             box1.style.boxShadow = ""
             box1.style.boxShadow = ""
@@ -175,11 +191,15 @@
                 }
             }
         }
+
+        // les mots dans les feuilles sont aléatoires selon la liste de mots.
         function updateBox(){
             inside1.innerHTML = array[boxCounter1]
             inside2.innerHTML = array[boxCounter2]
             inside3.innerHTML = array[boxCounter3]
         }
+
+        // Comment chaque feuille tombe. Les valeurs pour la vitesse de la déscente ou de la direction qu'ils se déplacent changent. Les feuilles retournent de l'autre direction s'il affranchit un certain point. Si les feuilles tombent jusqu'en bas de l'écran (1000px pour mon écran), il va retourner au début et enlever une vie.
         function dropBox() {
             box1Top += speed * 2 * box1Stats
             box2Top += speed * 2 * box2Stats
@@ -239,7 +259,7 @@
                 lose.play();
                 specialBox()
             }
-
+            // si tu perds toutes tes vies, le bouton pour réessayer apparait et les feuilles disparaissent.
             if (lives <= 0) {
                 retry.style.opacity = 1;
                 retry.style.pointerEvents = 'auto';
@@ -251,12 +271,12 @@
             }
             updateBox()
         }
-
-        setInterval(dropBox, 10)
-        updateBox()
-        document.addEventListener('keydown', clavier)
-        console.log(array.length)
         
+        updateBox()
+        setInterval(dropBox, 10)
+        document.addEventListener('keydown', clavier)
+
+        // Le fonctionnement du jeu. Les points sont accordés selon la longueur des mots (1 pt par lettre) et la vitesse augmente lorsque le joueur écrit correctement le mot. La feuille retourne au début avec un nouveau mot aléatoire. Si le mot était spécial, le jeu donne une vie ou met la vitesse à 1. Un SFX joue lorsque tu réponds correctement ou non. 
         function clavier(e) {
             if(e.keyCode === 13) {
                 essaiUser = document.getElementById('reponse').value
@@ -267,7 +287,6 @@
                 points += array[boxCounter1].length
                 boxCounter1 = Math.floor(Math.random() * array.length);
                 box1Top = 0
-                specialBox()
                 speed += 0.1
                 win.load();
                 win.play();
@@ -281,6 +300,7 @@
                     speed = 1
                     slow = false
                 }
+                specialBox()
                 score.innerHTML = "Score : " + points
                 if(boxCounter >= array.length) {
                     boxCounter = 0
@@ -289,7 +309,6 @@
                 points += array[boxCounter2].length
                 boxCounter2 = Math.floor(Math.random() * array.length);
                 box2Top = 0
-                specialBox()
                 speed += 0.1
                 win.load();
                 win.play();
@@ -303,6 +322,7 @@
                     speed = 1
                     slow = false
                 }
+                specialBox()
                 score.innerHTML = "Score : " + points
                 if(boxCounter >= array.length) {
                     boxCounter = 0
@@ -311,7 +331,6 @@
                 boxCounter3 = Math.floor(Math.random() * array.length);
                 points += array[boxCounter3].length
                 box3Top = 0
-                specialBox()
                 speed += 0.1
                 win.load();
                 win.play();
@@ -325,6 +344,7 @@
                     speed = 1
                     slow = false
                 }
+                specialBox()
                 score.innerHTML = "Score : " + points
                 if(boxCounter >= array.length) {
                     boxCounter = 0
